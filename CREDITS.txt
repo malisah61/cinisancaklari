@@ -1,0 +1,7 @@
+Çini Sancakları
+
+Karakter, duvar, kapı, sütun, sancak, fıçı, kaya ve diğer dekor modelleri:
+Mini Dungeon 1.4, Kenney (www.kenney.nl)
+Lisans: Creative Commons Zero (CC0 1.0), http://creativecommons.org/publicdomain/zero/1.0/
+
+Çini tahta, ekipman, at, ejder, mancınık ve büyü modelleri oyun için kodla üretildi.

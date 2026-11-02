@@ -1,0 +1,167 @@
+<title>Çini Sancakları</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Yerleşim: tam ekran çini meydanı; üstte rakip, altta bilgi şeridi ve kilim dokulu kart eli. */
+:root {
+  color-scheme: dark;
+  --dusk: #4a3d63; --ink: #1a1830; --panel: #2a2545; --line: #6b5c8a;
+  --bone: #f3ecd8; --muted: #c5bcd6; --gold: #f0c766; --turq: #2fc9bb; --cobalt: #1f4e99; --ember: #e0564c;
+  --disp: "Grenze", Georgia, "Times New Roman", serif; --body: "Alegreya Sans", "Segoe UI", Roboto, sans-serif;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; overflow: hidden; touch-action: manipulation; }
+body { margin: 0; background: var(--dusk); color: var(--bone); font: 16px/1.35 var(--body); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+#game { position: relative; height: 100%; overflow: hidden; }
+#scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.chip { position: absolute; left: 0; top: 0; display: flex; gap: 2px; font: 700 15px/1 var(--body); font-variant-numeric: tabular-nums; }
+.chip b { min-width: 21px; height: 21px; display: grid; place-items: center; color: var(--ink); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.chip .a { background: var(--gold); }
+.chip .h { background: var(--bone); }
+.chip.e .h { background: #ff9f92; }
+.chip.shielded .h { background: #a9dcff; box-shadow: none; }
+.chip.frozen .a { background: #a7e6f4; }
+.float { position: absolute; transform: translate(-50%, -50%); font: 700 24px/1 var(--disp); animation: rise .9s ease-out forwards; text-shadow: 0 2px 0 var(--ink), 0 0 5px var(--ink); white-space: nowrap; }
+.float.hurt { color: #ffb3a6; } .float.good { color: #a8f5b4; } .float.info { color: var(--gold); font-size: 19px; }
+@keyframes rise { to { transform: translate(-50%, -190%); opacity: 0; } }
+#top { position: absolute; left: 0; right: 0; top: 0; padding: 8px max(12px, env(safe-area-inset-right, 0px)) 6px max(12px, env(safe-area-inset-left, 0px)); display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; pointer-events: none; background: linear-gradient(#1a1830e6, #1a183000); }
+#top > * { pointer-events: auto; }
+.who { min-width: 0; }
+.who strong { font: 700 21px/1 var(--disp); }
+.who small { color: var(--muted); margin-left: 6px; font-size: 14px; }
+.bar { height: 9px; margin-top: 4px; background: #0e0d1d; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ember); transition: width .3s; }
+#pBar { background: var(--turq); }
+.top-right { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+.ghost { background: #1a183099; border: 1px solid var(--line); min-height: 34px; padding: 3px 10px; }
+#banner { z-index: 4; position: absolute; left: 50%; top: 21%; transform: translate(-50%, -8px); padding: 6px 18px; background: var(--ink); border-block: 2px solid var(--gold); font: 700 24px/1.1 var(--disp); text-align: center; white-space: nowrap; max-width: 94%; opacity: 0; pointer-events: none; }
+#banner.foe { border-color: var(--ember); }
+#banner.show { animation: flag 1.5s ease forwards; }
+@keyframes flag { 0% { opacity: 0; transform: translate(-50%, -8px); } 12%, 72% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 0); } }
+#dock { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: 6px; background: linear-gradient(#1a183000, #1a1830f2 26%); pointer-events: none; }
+#dock > * { pointer-events: auto; }
+#meta { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 18px max(12px, env(safe-area-inset-right, 0px)) 4px max(12px, env(safe-area-inset-left, 0px)); }
+.me strong { font: 700 20px/1 var(--disp); color: var(--turq); font-variant-numeric: tabular-nums; }
+.me .bar { width: 76px; }
+#manaBox { min-width: 0; font-variant-numeric: tabular-nums; }
+#manaBox b { color: var(--gold); font-size: 15px; }
+#manaPips { display: flex; gap: 3px; margin-top: 3px; }
+#manaPips i { width: 12px; height: 12px; transform: rotate(45deg) scale(.72); background: #0e0d1d; border: 1px solid var(--line); }
+#manaPips i.on { background: var(--gold); border-color: var(--gold); }
+#manaPips i.spent { background: #6a5a35; }
+#endBtn { background: var(--cobalt); border: 2px solid var(--bone); font: 700 18px/1 var(--disp); padding: 9px 13px; min-height: 42px; }
+#endBtn:disabled { opacity: .45; cursor: default; }
+#endBtn.ready { background: var(--turq); color: var(--ink); animation: nudge 1.1s infinite; }
+@keyframes nudge { 50% { transform: translateY(-2px); } }
+#info { min-height: 46px; display: flex; gap: 10px; align-items: center; padding: 2px max(12px, env(safe-area-inset-right, 0px)) 4px max(12px, env(safe-area-inset-left, 0px)); font-size: 15px; line-height: 1.22; }
+#infoText { flex: 1; min-width: 0; }
+#infoText em { color: #ffb3a6; font-style: normal; }
+#actBtn { background: var(--gold); color: var(--ink); border: 0; font-weight: 700; min-height: 40px; padding: 4px 14px; flex: none; }
+#hand { display: flex; gap: 6px; overflow-x: auto; padding: 8px max(12px, env(safe-area-inset-right, 0px)) 3px max(12px, env(safe-area-inset-left, 0px)); scrollbar-width: none; }
+#hand::-webkit-scrollbar { display: none; }
+.card { position: relative; flex: 0 0 auto; width: 84px; height: 124px; padding: 0 0 4px; display: flex; flex-direction: column; align-items: center; text-align: center; background-color: var(--bone); color: var(--ink); border: 0; overflow: hidden;
+  background-image: repeating-linear-gradient(135deg, var(--ember) 0 5px, var(--bone) 5px 10px, var(--cobalt) 10px 15px, var(--bone) 15px 20px); background-size: 100% 6px; background-repeat: no-repeat; background-position: bottom; transition: transform .14s; }
+.card.spell { background-image: repeating-linear-gradient(135deg, var(--turq) 0 5px, var(--bone) 5px 10px, var(--gold) 10px 15px, var(--bone) 15px 20px); }
+.card.sel { transform: translateY(-7px); box-shadow: 0 0 0 3px var(--gold); }
+.card.off { filter: saturate(.3) brightness(.65); }
+.cost { position: absolute; left: 3px; top: 3px; z-index: 1; width: 25px; height: 25px; display: grid; place-items: center; background: var(--ink); color: var(--gold); font: 700 16px/1 var(--body); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.art { width: 100%; height: 66px; display: grid; place-items: center; background: linear-gradient(#5f7fb3, #d9c7a1); }
+.card.spell .art { background: linear-gradient(#352a63, #7a4e9a); }
+.art img { height: 66px; width: 66px; display: block; }
+.nm { font: 700 15px/1 var(--disp); padding: 4px 2px 1px; white-space: nowrap; }
+.stats { display: flex; justify-content: center; gap: 6px; white-space: nowrap; font: 700 14px/1 var(--body); font-variant-numeric: tabular-nums; }
+.st.atk { color: #9a5c00; } .st.atk::before { content: "Sal "; font-weight: 500; font-size: 11px; }
+.st.hp { color: #b5322c; } .st.hp::before { content: "Can "; font-weight: 500; font-size: 11px; }
+.st.sp { color: #51407d; font-size: 12px; }
+.kw { font-size: 11px; line-height: 1; color: #38505f; margin-top: 2px; white-space: nowrap; }
+.tx { font-size: 14px; line-height: 1.15; padding: 4px 6px 0; }
+.card.big { width: 104px; height: 216px; }
+.card.big .art { height: 86px; } .card.big .art img { height: 86px; width: 86px; }
+.screen { position: absolute; inset: 0; z-index: 5; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 18px max(16px, env(safe-area-inset-left, 0px)); background: #1a183099; text-align: center; }
+.screen h1 { margin: 0; font: 700 clamp(46px, 14vw, 76px)/.92 var(--disp); color: var(--bone); text-shadow: 0 3px 0 var(--cobalt), 0 6px 0 var(--ink); text-wrap: balance; }
+.screen h2 { margin: 0; font: 700 38px/1 var(--disp); color: var(--gold); text-wrap: balance; }
+.screen p { margin: 0; max-width: 34em; }
+#stages { list-style: none; margin: 0; padding: 0; width: min(100%, 330px); display: grid; gap: 3px; }
+#stages li { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; padding: 5px 10px; background: #1a1830c9; text-align: left; color: var(--muted); }
+#stages li span { font: 700 18px/1 var(--disp); }
+#stages li.now { background: var(--cobalt); color: var(--bone); }
+#stages li.done { text-decoration: line-through; color: var(--turq); }
+.main { background: var(--gold); color: var(--ink); border: 0; font: 700 23px/1 var(--disp); padding: 13px 26px; min-height: 52px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+#rules { max-width: 34em; text-align: left; background: var(--panel); padding: 10px 14px; font-size: 15px; }
+#rules ul { margin: 6px 0 0; padding-left: 18px; }
+#rewards { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+#noGl { position: absolute; inset: 0; z-index: 9; display: grid; place-items: center; padding: 24px; text-align: center; background: var(--ink); }
+body:not(.playing) #top, body:not(.playing) #dock, body:not(.playing) #labels { visibility: hidden; }
+@media (orientation: landscape) and (max-height: 520px) {
+  #dock { top: 52px; right: auto; width: min(44%, 340px); padding-bottom: 4px; display: flex; flex-direction: column; background: #1a1830e0; overflow-y: auto; }
+  #meta { padding-top: 6px; gap: 6px; } #manaPips { display: none; } .me .bar { width: 44px; } #endBtn { font-size: 16px; padding: 6px 8px; min-height: 38px; }
+  #info { min-height: 34px; font-size: 13px; order: 3; }
+  #hand { flex-wrap: wrap; overflow: visible; padding-top: 4px; }
+  .card { width: 68px; height: 94px; } .art { height: 44px; } .art img { height: 44px; width: 44px; } .kw { display: none; } .nm { font-size: 13px; }
+  .card.big { width: 96px; height: 176px; } .card.big .art { height: 56px; } .card.big .art img { height: 56px; width: 56px; }
+  .screen { justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { #endBtn.ready { animation: none; } }
+</style>
+<div id="game">
+  <canvas id="scene" aria-label="Üç sütun, beş sıralı üç boyutlu çini oyun tahtası"></canvas>
+  <div id="labels"></div>
+  <div id="banner" role="status"></div>
+  <header id="top">
+    <div class="who"><strong id="eName">Rakip</strong><small>Kale <b id="eHp">0</b> · El <b id="eHand">0</b></small><div class="bar"><i id="eBar"></i></div></div>
+    <div class="top-right"><span id="round">Tur 1</span><button class="ghost" id="quitBtn">Çık</button></div>
+  </header>
+  <section id="dock">
+    <div id="meta">
+      <div class="me"><strong id="pHp">20</strong><div class="bar"><i id="pBar"></i></div></div>
+      <div id="manaBox"><b>Mana <span id="mana">0/0</span></b><span style="color:var(--muted);font-size:13px"> · Deste <span id="deckCount">0</span></span><div id="manaPips"></div></div>
+      <button id="endBtn">Turu bitir</button>
+    </div>
+    <div id="info"><div id="infoText"></div><button id="actBtn" hidden>Oyna</button></div>
+    <div id="hand"></div>
+  </section>
+  <section class="screen" id="titleScreen" hidden>
+    <h1>Çini Sancakları</h1>
+    <p id="bestText"></p>
+    <ol id="stages"></ol>
+    <p id="deckLine" style="color:var(--muted)"></p>
+    <button class="main" id="startBtn">Düelloya başla</button>
+    <div class="row">
+      <button class="ghost" id="rulesBtn">Nasıl oynanır?</button>
+      <button class="ghost" id="muteBtn">Sesi kapat</button>
+      <button class="ghost" id="resetBtn" hidden>Seferi sıfırla</button>
+    </div>
+    <div id="rules" hidden>
+      <b>Amaç:</b> Rakibin kalesini yık.
+      <ul>
+        <li>Her tur mana kazanırsın. Kartları manayla oynarsın.</li>
+        <li>Birimleri kendi tarafındaki iki sıraya çağırırsın.</li>
+        <li>Birim seç, parlayan kareye yürü, sonra düşmana vur. Çağrıldığı tur hamle yapamaz.</li>
+        <li>Yakın dövüşte hayatta kalan rakip karşılık verir. Okçu ve mancınık karşılık almaz.</li>
+        <li>Kaleye vurmak için son sıraya ulaş ya da menzile gir.</li>
+        <li>Ortadaki sunağı elinde tutarsan tur başında +1 mana kazanırsın.</li>
+        <li>24. turdan sonra kaleler her tur 2 can kaybeder.</li>
+        <li>Her zaferden sonra destene yeni bir kart seçersin.</li>
+      </ul>
+      <small>3D karakter ve yapılar: Mini Dungeon, Kenney (kenney.nl), CC0 lisansı. Çini tahta ve ek modeller oyuna özeldir.</small>
+    </div>
+  </section>
+  <section class="screen" id="rewardScreen" hidden>
+    <h2>Zafer! Bir kart seç</h2>
+    <p>Seçtiğin kart destene katılır.</p>
+    <div id="rewards"></div>
+  </section>
+  <section class="screen" id="endScreen" hidden>
+    <h2 id="endTitle"></h2>
+    <p id="endText"></p>
+    <button class="main" id="endGo">Devam et</button>
+  </section>
+  <div id="noGl" hidden>Bu tarayıcıda 3D (WebGL) kapalı. Chrome'un güncel sürümüyle açmayı dene.</div>
+</div>
+<script>
+/*__JS__*/
+</script>

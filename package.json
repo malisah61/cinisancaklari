@@ -1,0 +1,14 @@
+{
+  "name": "cini-sancaklari",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "build": "node build.js", "test": "node test/logic.test.js 5" },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0"
+  }
+}

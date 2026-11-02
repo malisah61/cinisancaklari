@@ -1,0 +1,6 @@
+{
+  "appId": "com.malisah61.cinisancaklari",
+  "appName": "Çini Sancakları",
+  "webDir": "dist",
+  "android": { "backgroundColor": "#4a3d63" }
+}
